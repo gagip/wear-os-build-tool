@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WearOS 설치</title>
+</head>
+
+<body>
+    <h1>WearOS 설치</h1>
+    <form action="/install" method="post">
+        <label for="options">옵션 선택:</label>
+        <select id="options" name="options">
+            {% for option in options %}
+            <option value="{{ option }}">{{ option }}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <label for="ipAddress">Enter IP Address:</label>
+        <input type="text" name="ipAddress" id="ipAddress">
+        <br><br>
+        <label for="pairingCode">Enter Pairing Code:</label>
+        <input type="text" name="pairingCode" id="pairingCode">
+        <button type="submit">Submit</button>
+    </form>
+    {% if results %}
+    <h2>Results</h2>
+    <pre>{{ results | safe }}</pre>
+    {% endif %}
+</body>
+
+</html>

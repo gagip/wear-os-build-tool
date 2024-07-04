@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  adb_server:
+    build: .
+    ports:
+      - "5000:5000"
+    privileged: true
+    volumes:
+      - .:/app  
+      - /dev/bus/usb:/dev/bus/usb
+    environment:
+      - NGROK_AUTH_TOKEN=${NGROK_AUTH_TOKEN}
+    command: ["bash", "-c", "./start_ngrok.sh & python3 ./app.py"]
+    network_mode: "host"
