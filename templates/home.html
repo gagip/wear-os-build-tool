@@ -5,29 +5,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WearOS 설치</title>
+    <style>
+        .tab {
+            display: none;
+        }
+        
+        .tab.active {
+            display: block;
+        }
+        
+        .tab-buttons {
+            margin-bottom: 20px;
+        }
+        
+        .tab-buttons button {
+            margin-right: 10px;
+        }
+    </style>
+    <script>
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function handleFormSubmit(event, formId) {
+            event.preventDefault();
+            const submitButton = document.getElementById(formId + '-button');
+            submitButton.disabled = true;
+
+            const form = event.target;
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: form.method,
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = `<h2>Results</h2><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                submitButton.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                submitButton.disabled = false;
+            });
+        }
+    </script>
 </head>
 
 <body>
     <h1>WearOS 설치</h1>
-    <form action="/install" method="post">
-        <label for="options">옵션 선택:</label>
-        <select id="options" name="options">
-            {% for option in options %}
-            <option value="{{ option }}">{{ option }}</option>
-            {% endfor %}
-        </select>
-        <br><br>
-        <label for="ipAddress">Enter IP Address:</label>
-        <input type="text" name="ipAddress" id="ipAddress">
-        <br><br>
-        <label for="pairingCode">Enter Pairing Code:</label>
-        <input type="text" name="pairingCode" id="pairingCode">
-        <button type="submit">Submit</button>
-    </form>
-    {% if results %}
-    <h2>Results</h2>
-    <pre>{{ results | safe }}</pre>
-    {% endif %}
+
+    <div class="tab-buttons">
+        <button onclick="showTab('pairing-tab')">페어링</button>
+        <button onclick="showTab('install-tab')">설치</button>
+    </div>
+
+    <div id="pairing-tab" class="tab active">
+        <h2>페어링</h2>
+        <form action="/pair" method="post" onsubmit="handleFormSubmit(event, 'pairing-form')">
+            <label for="pairing-ipAddress">Enter IP Address:</label>
+            <input type="text" name="ipAddress" id="pairing-ipAddress">
+            <br><br>
+            <label for="pairing-pairingCode">Enter Pairing Code:</label>
+            <input type="text" name="pairingCode" id="pairing-pairingCode">
+            <button type="submit" id="pairing-form-button">Submit</button>
+        </form>
+    </div>
+
+    <div id="install-tab" class="tab">
+        <h2>설치</h2>
+        <form action="/install" method="post" onsubmit="handleFormSubmit(event, 'install-form')">
+            <label for="install-options">apk:</label>
+            <select id="install-options" name="options">
+                {% for option in options %}
+                <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+            <br><br>
+            <label for="install-ipAddress">Enter IP Address:</label>
+            <input type="text" name="ipAddress" id="install-ipAddress">
+            <button type="submit" id="install-form-button">Submit</button>
+        </form>
+    </div>
+
+    <div id="results">
+        {% if results %}
+        <h2>Results</h2>
+        <pre>{{ results | safe }}</pre>
+        {% endif %}
+    </div>
 </body>
 
 </html>
