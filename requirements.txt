@@ -35,7 +35,7 @@ matplotlib-inline==0.1.7
 mistune==3.0.2
 mypy-extensions==1.0.0
 nbclient==0.10.0
-nbconvert==7.16.4
+nbconvert==7.17.0
 nbformat==5.10.4
 nodeenv==1.9.1
 packaging==24.1
