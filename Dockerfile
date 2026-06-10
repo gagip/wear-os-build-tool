@@ -9,7 +9,6 @@ RUN apt-get update && \
     unzip \
     wget \
     curl \
-    jq \
     openjdk-8-jdk \
     python3 \
     python3-pip && \
@@ -21,14 +20,10 @@ RUN mkdir -p ${ANDROID_HOME} && \
     unzip /tmp/platform-tools.zip -d ${ANDROID_HOME} && \
     rm /tmp/platform-tools.zip
 
-RUN wget -q https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip -O /tmp/ngrok.zip && \
-    unzip /tmp/ngrok.zip -d /usr/local/bin && \
-    rm /tmp/ngrok.zip
-
 COPY requirements.txt /app/requirements.txt
 RUN pip3 install -r /app/requirements.txt
 
 COPY . /app
 WORKDIR /app
 
-CMD ["bash", "-c", "./start_ngrok.sh & python3 ./app.py"]
+CMD ["python3", "./app.py"]

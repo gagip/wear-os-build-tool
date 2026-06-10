@@ -6,9 +6,7 @@ services:
       - "5000:5000"
     privileged: true
     volumes:
-      - .:/app  
+      - .:/app
       - /dev/bus/usb:/dev/bus/usb
-    environment:
-      - NGROK_AUTH_TOKEN=${NGROK_AUTH_TOKEN}
-    command: ["bash", "-c", "./start_ngrok.sh & python3 ./app.py"]
+    command: ["python3", "./app.py"]
     network_mode: "host"
