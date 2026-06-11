@@ -11,4 +11,6 @@ services:
     volumes:
       - .:/app
       - /dev/bus/usb:/dev/bus/usb
-    network_mode: "host"
+    # host 네트워크를 쓰지 않는다: 호스트의 adb 데몬(예: Android Studio)이 5037 포트를
+    # 점유하면 컨테이너 adb가 자체 데몬을 못 띄워 페어링이 멈춘다. bridge(기본) 네트워크로
+    # 컨테이너가 독립 5037 데몬을 갖고, 워치에는 adb connect <ip>:<port> 아웃바운드로 연결한다.

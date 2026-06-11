@@ -8,9 +8,16 @@ app = Flask(__name__)
 
 FILES_DIR = "files"
 
+# adb 명령이 멈춰도 웹 요청이 무한 대기하지 않도록 timeout(초)을 둔다.
+# install은 apk 전송 때문에 더 넉넉히 잡는다.
+DEFAULT_TIMEOUT_SECONDS = 30
+INSTALL_TIMEOUT_SECONDS = 300
 
-def run_command(command):
-    result = subprocess.run(command, capture_output=True, text=True, check=True)
+
+def run_command(command, timeout=DEFAULT_TIMEOUT_SECONDS):
+    result = subprocess.run(
+        command, capture_output=True, text=True, check=True, timeout=timeout
+    )
     return result.stdout
 
 
@@ -24,8 +31,16 @@ def adb_process(commands):
         results["start-server"] = start_server_result
 
         for command in commands:
-            command_result = run_command(command)
+            timeout = (
+                INSTALL_TIMEOUT_SECONDS
+                if "install" in command
+                else DEFAULT_TIMEOUT_SECONDS
+            )
+            command_result = run_command(command, timeout=timeout)
             results[command[0]] = command_result
+
+    except subprocess.TimeoutExpired as e:
+        results["error"] = f"Command timed out after {e.timeout}s: {' '.join(e.cmd)}"
 
     except subprocess.CalledProcessError as e:
         results["error"] = f"An error occurred: {e.stderr}"
