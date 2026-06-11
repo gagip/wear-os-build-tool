@@ -2,8 +2,11 @@ import os
 import subprocess
 
 from flask import Flask, jsonify, render_template, request
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+
+FILES_DIR = "files"
 
 
 def run_command(command):
@@ -36,7 +39,7 @@ def adb_process(commands):
 @app.route("/")
 def home():
     try:
-        file_names = os.listdir("files")
+        file_names = os.listdir(FILES_DIR)
     except FileNotFoundError:
         file_names = []
     # 내림차순 정렬
@@ -71,10 +74,32 @@ def install():
 
     commands = [
         ["adb", "connect", ip_address],
-        ["adb", "install", f"./files/{selected_option}"],
+        ["adb", "install", f"./{FILES_DIR}/{selected_option}"],
     ]
     results = adb_process(commands)
     return jsonify(results)
+
+
+@app.route("/upload", methods=["POST"])
+def upload():
+    # 프로세스 경계(HTTP 멀티파트 업로드) — 잘못된 입력은 Result처럼 JSON 에러로 반환한다.
+    uploaded = request.files.get("apk")
+    if uploaded is None or uploaded.filename == "":
+        return jsonify({"error": "APK file is required."})
+
+    filename = secure_filename(uploaded.filename)
+    if not filename.lower().endswith(".apk"):
+        return jsonify({"error": "Only .apk files are allowed."})
+
+    # files/ 폴더가 없으면 생성하고, 같은 이름이면 덮어쓴다.
+    os.makedirs(FILES_DIR, exist_ok=True)
+    save_path = os.path.join(FILES_DIR, filename)
+    try:
+        uploaded.save(save_path)
+    except OSError as e:
+        return jsonify({"error": f"Failed to save file: {e}"})
+
+    return jsonify({"upload": f"Saved as {filename}"})
 
 
 if __name__ == "__main__":

@@ -48,6 +48,10 @@
                 const resultsDiv = document.getElementById('results');
                 resultsDiv.innerHTML = `<h2>Results</h2><pre>${JSON.stringify(data, null, 2)}</pre>`;
                 submitButton.disabled = false;
+                // 업로드가 성공하면 설치 목록에 반영되도록 새로고침한다.
+                if (formId === 'upload-form' && data.upload) {
+                    setTimeout(() => window.location.reload(), 800);
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -62,7 +66,19 @@
 
     <div class="tab-buttons">
         <button onclick="showTab('pairing-tab')">페어링</button>
+        <button onclick="showTab('upload-tab')">업로드</button>
         <button onclick="showTab('install-tab')">설치</button>
+    </div>
+
+    <div id="upload-tab" class="tab">
+        <h2>업로드</h2>
+        <form action="/upload" method="post" enctype="multipart/form-data"
+              onsubmit="handleFormSubmit(event, 'upload-form')">
+            <label for="upload-apk">APK 파일:</label>
+            <input type="file" name="apk" id="upload-apk" accept=".apk">
+            <button type="submit" id="upload-form-button">Upload</button>
+        </form>
+        <p>업로드한 apk는 files 폴더에 저장되어 설치 탭 목록에 추가됩니다. 같은 이름은 덮어씁니다.</p>
     </div>
 
     <div id="pairing-tab" class="tab active">

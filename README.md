@@ -4,16 +4,20 @@
 
 ## 사용법
 
-1. **files 폴더에 apk을 넣는다**
-
-2. **docker를 설치해 아래 명령어를 실행한다**
+1. **docker를 설치해 아래 명령어를 실행한다**
 
 ```bash
 docker-compose build
 docker-compose up
 ```
 
-3. **브라우저에서 [http://localhost:5000](http://localhost:5000) 으로 접속**
+2. **브라우저에서 [http://localhost:5000](http://localhost:5000) 으로 접속**
+
+3. **apk를 준비한다 (둘 중 하나)**
+   - **업로드 탭**에서 apk 파일을 선택해 업로드한다. `files` 폴더에 저장되고 설치 목록에 바로 추가된다. 같은 이름은 덮어쓴다.
+   - 또는 `files` 폴더에 apk을 직접 넣어도 된다.
+
+4. **페어링 탭**에서 기기와 무선 페어링한 뒤, **설치 탭**에서 apk를 골라 설치한다.
 
 ## 외부 노출 (선택)
 
