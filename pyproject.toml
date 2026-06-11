@@ -1,0 +1,18 @@
+[project]
+name = "wear-os-build-tool"
+version = "0.1.0"
+description = "Wear OS 기기에 무선 ADB로 APK를 설치하는 Flask 웹 도구"
+requires-python = "==3.12.*"
+dependencies = [
+    "flask==3.0.3",
+]
+
+[dependency-groups]
+dev = [
+    "black==24.8.0",
+    "isort==5.13.2",
+    "pre-commit==3.5.0",
+]
+
+[tool.uv]
+package = false
